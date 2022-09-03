@@ -1,0 +1,38 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET      /                                                                     controllers.HomeController.index
+GET      /dist/                                                                controllers.Assets.at(path="/public/dist", file="index.html")
+# Map static resources from the /public folder to the /assets URL path
+GET      /html/*file                                                           controllers.Assets.at(path="/public/html", file)
+GET      /dist/*file                                                           controllers.Assets.at(path="/public/dist", file)
+GET      /assets/*file                  controllers.Assets.versioned(path="/public", file: Asset)
+GET      /ZoneIDs                       controllers.HomeController.zoneIDList
+GET      /CityInfos                     controllers.HomeController.getCityInfos()
+GET      /LunarDateTime                 controllers.HomeController.getLunarDateTime(cityName, year:Int, month:Int, day:Int, hour:Int, minute:Int)
+GET      /LunarDateTimeNow              controllers.HomeController.getLunarDateTimeNow(cityName)
+GET      /RaceLunarDateTime             controllers.HomeController.getUserRaceLunarDateTime(userCityName, year:Int, month:Int, day:Int, hour:Int, minute:Int, raceCityName)
+POST     /Finance/:cityName             controllers.HomeController.postFinanceData(cityName)
+
+# USER API
+POST     /User                          controllers.UserController.newUser
+GET      /User                          controllers.UserController.getAllUsers
+PUT      /User/:id                      controllers.UserController.updateUser(id)
+DELETE   /User/:id                      controllers.UserController.deleteUser(id)
+GET      /User/:id                      controllers.UserController.getUser(id)
+POST     /User/:id/items                controllers.UserController.setUserItems(id)
+
+# LOGIN API
+GET      /logout                        controllers.Login.logout
+POST     /login                         controllers.Login.authenticate
+GET      /login                         controllers.Login.isLogin
+
+# Investment
+GET      /WinRateTrend/:items/:start/:end           controllers.Query.winRateTrendChart(items, start:Long, end:Long)
+GET      /InvestItemTiming                          controllers.Query.getInvestItemTiming()
+
+# Polling API
+GET     /PendingGame                   controllers.Query.getPendingGame()
+POST    /Prediction/:id                controllers.Query.postPrediction(id)
