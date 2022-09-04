@@ -1,5 +1,6 @@
 package controllers
 
+import models.ModelHelper.waitReadyResult
 import models.{GroupOp, User, UserOp}
 import play.api.Logging
 import play.api.libs.json._
@@ -19,6 +20,7 @@ class Login @Inject()
 (userOp: UserOp, groupOp:GroupOp, cc: MessagesControllerComponents)
 (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) with Logging {
   implicit val credentialReads = Json.reads[Credential]
+  implicit val log = logger
   import User._
   val authorizedAction = AuthorizedAction(parse.defaultBodyParser)
 
@@ -32,11 +34,11 @@ class Login @Inject()
         crd => {
           val f = userOp.getUserByEmail(crd.user)
           for (user <- f) yield {
-            if (user.password != crd.password) {
+            if (user == null || user.password != crd.password) {
               Results.Unauthorized(Json.obj("ok" -> false, "msg" -> "密碼或帳戶錯誤"))
             } else {
               implicit val w2 = Json.writes[UserData]
-              val group = Group.defaultGroup(0)
+              val group = waitReadyResult(groupOp.getGroupByID(user.group))
               val userInfo = UserInfo(user._id, user.uuid, user.name, "default", user.isAdmin)
               Ok(Json.obj("ok" -> true, "userData" -> UserData(user, group))).
                 withSession(AuthorizedAction.setUserinfo(request, userInfo))

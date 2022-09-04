@@ -22,7 +22,7 @@
       <b-col lg="4" class="d-flex align-items-center auth-bg px-2 p-lg-5">
         <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
           <b-card-title title-tag="h2" class="font-weight-bold mb-1">
-            歡迎使用全球投資氛圍指數App👋
+            歡迎使用冊格子借書系統👋
           </b-card-title>
           <b-card-text class="mb-2"> 請登入您的帳號 </b-card-text>
 
@@ -126,8 +126,8 @@ export default {
   data() {
     return {
       status: '',
-      password: '45142399bank!',
-      userEmail: 'karateboy@stronghold.tw',
+      password: '',
+      userEmail: '',
       sideImg: require('@/assets/images/pages/login-v2.svg'),
       // validation rulesimport store from '@/store/index'
       required,
@@ -147,9 +147,7 @@ export default {
       return this.sideImg;
     },
   },
-  mounted() {
-    this.validationForm();
-  },
+  mounted() {},
   methods: {
     ...mapMutations(['setLogin']),
     ...mapMutations('user', ['setUserInfo']),
@@ -174,6 +172,7 @@ export default {
                     },
                   ]);
                 } else {
+                  console.info(userData.group.abilities);
                   this.$ability.update(userData.group.abilities);
                 }
                 this.$router.push('/');

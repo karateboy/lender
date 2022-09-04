@@ -18,17 +18,34 @@ import scala.language.implicitConversions
 import scala.util.{Failure, Success}
 
 case class User(_id: String, uuid:ObjectId, password: String, name: String,
-                birthday:Date, cityId:String, isAdmin: Boolean, items: Seq[ObjectId])
+                isAdmin: Boolean, group:String)
 
 object User{
   implicit val read = Json.reads[User]
   implicit val write = Json.writes[User]
+  val defaultUsers = Seq(
+    User(_id="karateboy@tazze.tw",
+      uuid= new ObjectId(),
+      password = "abc123",
+      name = "法人管理員",
+      isAdmin = true, Group.GROUP1),
+    User(_id="karateboy1@tazze.tw",
+      uuid= new ObjectId(),
+      password = "abc123",
+      name = "法人用戶1",
+      isAdmin = false, Group.GROUP1),
+    User(_id="karateboy2@tazze.tw",
+      uuid= new ObjectId(),
+      password = "abc123",
+      name = "法人用戶2",
+      isAdmin = false, Group.GROUP1),
+  )
 }
 
 import javax.inject._
 
 @Singleton
-class UserOp @Inject()(mongodb: MongoDB, cityInfoOp: CityInfoOp, gamerOp: GamerOp, lunarCalendar: LunarCalendar) extends Logging {
+class UserOp @Inject()(mongodb: MongoDB) extends Logging {
 
   import org.mongodb.scala._
   implicit val log = logger
@@ -48,19 +65,10 @@ class UserOp @Inject()(mongodb: MongoDB, cityInfoOp: CityInfoOp, gamerOp: GamerO
     f onComplete {
       case Success(count)=>
         if (count == 0) {
-          val birthday = LocalDateTime.of(1975, 10, 25, 4, 0, 0)
-          val uuid = new ObjectId()
-          val cityInfo = cityInfoOp.map("台北")
-          val defaultUser = User(_id="karateboy@stronghold.tw",
-            uuid = uuid,
-            password = "45142399bank!",
-            name = "Aragorn",
-            birthday = Date.from(birthday.atZone(ZoneId.of(cityInfo.zoneId)).toInstant),
-            cityId= cityInfo.name,
-            isAdmin = true,
-            items = Seq.empty[ObjectId])
-          logger.info(s"Create default user: $defaultUser")
-          newUser(defaultUser)
+          User.defaultUsers.foreach(user=>{
+            logger.info(s"Create default user: $user")
+            newUser(user)
+          })
         }
       case Failure(exception)=>
         logger.error("failed", exception)
@@ -71,13 +79,6 @@ class UserOp @Inject()(mongodb: MongoDB, cityInfoOp: CityInfoOp, gamerOp: GamerO
 
   def newUser(user: User): Future[InsertOneResult] = {
     val f = collection.insertOne(user).toFuture()
-    val cityInfo = cityInfoOp.map(user.cityId)
-    val zoneDateTime = user.birthday.toInstant.atZone(ZoneId.of(cityInfo.zoneId))
-    val lunarDateTime = lunarCalendar.getLunarDateTime(zoneDateTime,
-      ZoneId.of(ZoneOffset.ofHours(cityInfo.zoneOffset).getId), cityInfo.minuteOffset)
-    val gamer = Gamer(_id=user.uuid, user.name, birthday = user.birthday, cityId = user.cityId,
-      lunarDateTime = lunarDateTime)
-    gamerOp.upsert(gamer)
     f onComplete completeHandler
     f
   }
@@ -94,8 +95,7 @@ class UserOp @Inject()(mongodb: MongoDB, cityInfoOp: CityInfoOp, gamerOp: GamerO
       val update1 =
           Updates.combine(
             Updates.set("name", user.name),
-            Updates.set("isAdmin", user.isAdmin),
-            Updates.set("items", user.items)
+            Updates.set("isAdmin", user.isAdmin)
           )
       val update = if (user.password.nonEmpty)
         Updates.combine(update1, Updates.set("password", user.password))

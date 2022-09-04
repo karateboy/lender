@@ -9,7 +9,7 @@ export const $themeBreakpoints = {};
 // APP CONFIG
 export const $themeConfig = {
   app: {
-    appName: '全球投資氛圍指數', // Will update name in navigation menu (Branding)
+    appName: '冊格子借書系統', // Will update name in navigation menu (Branding)
     // eslint-disable-next-line global-require
     appLogoImage: require('@/assets/images/logo/logo.svg'), // Will update logo in navigation menu (Branding)
   },

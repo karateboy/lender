@@ -9,12 +9,6 @@ GET      /dist/                                                                c
 GET      /html/*file                                                           controllers.Assets.at(path="/public/html", file)
 GET      /dist/*file                                                           controllers.Assets.at(path="/public/dist", file)
 GET      /assets/*file                  controllers.Assets.versioned(path="/public", file: Asset)
-GET      /ZoneIDs                       controllers.HomeController.zoneIDList
-GET      /CityInfos                     controllers.HomeController.getCityInfos()
-GET      /LunarDateTime                 controllers.HomeController.getLunarDateTime(cityName, year:Int, month:Int, day:Int, hour:Int, minute:Int)
-GET      /LunarDateTimeNow              controllers.HomeController.getLunarDateTimeNow(cityName)
-GET      /RaceLunarDateTime             controllers.HomeController.getUserRaceLunarDateTime(userCityName, year:Int, month:Int, day:Int, hour:Int, minute:Int, raceCityName)
-POST     /Finance/:cityName             controllers.HomeController.postFinanceData(cityName)
 
 # USER API
 POST     /User                          controllers.UserController.newUser
@@ -24,15 +18,17 @@ DELETE   /User/:id                      controllers.UserController.deleteUser(id
 GET      /User/:id                      controllers.UserController.getUser(id)
 POST     /User/:id/items                controllers.UserController.setUserItems(id)
 
+POST     /Group                                                                   controllers.HomeController.newGroup
+GET      /Groups                                                                  controllers.HomeController.getAllGroups
+PUT      /Group/:id                                                               controllers.HomeController.updateGroup(id)
+DELETE   /Group/:id                                                               controllers.HomeController.deleteGroup(id)
+
+GET      /GroupBooks/:groupID           controllers.Query.getGroupBooks(groupID)
+GET      /BorrowedBooks/:userID         controllers.Query.getBorrowBooks(userID)
+POST     /BorrowBook                    controllers.Query.borrowBook()
+POST     /ReturnBook                    controllers.Query.returnBook()
+
 # LOGIN API
 GET      /logout                        controllers.Login.logout
 POST     /login                         controllers.Login.authenticate
 GET      /login                         controllers.Login.isLogin
-
-# Investment
-GET      /WinRateTrend/:items/:start/:end           controllers.Query.winRateTrendChart(items, start:Long, end:Long)
-GET      /InvestItemTiming                          controllers.Query.getInvestItemTiming()
-
-# Polling API
-GET     /PendingGame                   controllers.Query.getPendingGame()
-POST    /Prediction/:id                controllers.Query.postPrediction(id)

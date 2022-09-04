@@ -9,7 +9,6 @@ export default {
       name: '',
       isAdmin: false,
       group: '',
-      items: [],
     },
   },
   getters: {},
@@ -19,8 +18,6 @@ export default {
       state.userInfo.name = val.name;
       state.userInfo.isAdmin = val.isAdmin;
       state.userInfo.group = val.group;
-      state.userInfo.items = val.items;
-      state.userInfo.birthday = val.birthday;
     },
     setLogin(state, val) {
       state.login = val;

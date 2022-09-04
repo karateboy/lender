@@ -21,15 +21,14 @@ const router = new VueRouter({
       component: () => import('@/views/UserProfile.vue'),
     },
     {
-      path: '/user-portfolio',
-      name: 'user-portfolio',
-      component: () => import('@/views/UserPortfolio.vue'),
+      path: '/borrow-book',
+      name: 'borrow-book',
+      component: () => import('@/views/BorrowBook.vue'),
     },
-    //winrate-query
     {
-      path: '/winrate-query',
-      name: 'winrate-query',
-      component: () => import('@/views/WinRateTrend.vue'),
+      path: '/return-book',
+      name: 'return-book',
+      component: () => import('@/views/ReturnBook.vue'),
     },
     {
       path: '/user-management',

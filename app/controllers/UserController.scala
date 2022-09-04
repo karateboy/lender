@@ -14,8 +14,7 @@ import ModelHelper._
 import java.util.Date
 
 case class InvestItem(name:String, birthday:Date, cityId:String, uuid:Option[String])
-class UserController @Inject()(lunarCalendar: LunarCalendar, cc: MessagesControllerComponents, userOp: UserOp,
-                     predictionOp: PredictionOp)
+class UserController @Inject()(cc: MessagesControllerComponents, userOp: UserOp)
                     (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) with Logging {
 
   import User._
