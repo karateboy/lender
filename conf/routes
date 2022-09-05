@@ -28,6 +28,8 @@ GET      /BorrowedBooks/:userID         controllers.Query.getBorrowBooks(userID)
 POST     /BorrowBook                    controllers.Query.borrowBook()
 POST     /ReturnBook                    controllers.Query.returnBook()
 
+GET      /BookLogs/:userID              controllers.Query.getBookLogs(userID)
+
 # LOGIN API
 GET      /logout                        controllers.Login.logout
 POST     /login                         controllers.Login.authenticate

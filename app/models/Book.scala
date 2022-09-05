@@ -18,7 +18,8 @@ import models.ModelHelper._
 import org.mongodb.scala.model.Updates
 
 import java.time.Instant
-import java.time.temporal.{ChronoUnit}
+import java.time.temporal.ChronoUnit
+import scala.collection.mutable
 case class Book(_id:ObjectId, title:String, groupId:String, lender:Option[String] = None,
                 lentDate:Option[Date] = None, dueDate:Option[Date] = None)
 object Book {
@@ -118,5 +119,16 @@ class BookOp @Inject()(mongoDB: MongoDB, bookLogOp: BookLogOp) extends Logging {
     val f = collection.find(equal("lender", userID)).toFuture()
     f.failed.foreach(ex=>logger.error("failed", ex))
     f
+  }
+
+  def getBookMapFromIds(bookIds:Seq[ObjectId]): Future[mutable.Map[ObjectId, Book]] = {
+    val f = collection.find(in("_id", bookIds:_*)).toFuture()
+    f.failed.foreach(ex=>logger.error("failed", ex))
+    for(ret<-f) yield {
+      import scala.collection.mutable.Map
+      val map = Map.empty[ObjectId, Book]
+      ret.foreach(book=>map.update(book._id, book))
+      map
+    }
   }
 }

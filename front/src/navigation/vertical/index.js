@@ -19,6 +19,11 @@ export default [
     route: 'return-book',
   },
   {
+    title: '我的借還書紀錄',
+    icon: 'ActivityIcon',
+    route: 'my-booklogs',
+  },
+  {
     title: '系統管理',
     icon: 'SettingsIcon',
     children: [

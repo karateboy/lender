@@ -31,6 +31,11 @@ const router = new VueRouter({
       component: () => import('@/views/ReturnBook.vue'),
     },
     {
+      path: '/my-booklogs',
+      name: 'my-booklogs',
+      component: () => import('@/views/MyTransactionLog.vue'),
+    },
+    {
       path: '/user-management',
       name: 'user-management',
       component: () => import('@/views/UserManagement.vue'),

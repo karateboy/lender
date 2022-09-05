@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import models.ModelHelper._
 
-class Query @Inject()(cc: MessagesControllerComponents, bookOp: BookOp)
+class Query @Inject()(cc: MessagesControllerComponents, bookOp: BookOp, bookLogOp: BookLogOp)
   extends MessagesAbstractController(cc) with Logging {
 
   val authorizedAction: Security.AuthenticatedBuilder[UserInfo] = AuthorizedAction(parse.defaultBodyParser)
@@ -62,6 +62,26 @@ class Query @Inject()(cc: MessagesControllerComponents, bookOp: BookOp)
             Ok(Json.toJson(ret))
         }
       )
+  }
+
+  def getBookLogs(userID: String) = authorizedAction.async {
+    val f = bookLogOp.getLogsByUserId(userID)
+    val ffRet = {
+    for(bookLogs<-f) yield {
+      val bookIds = bookLogs.map(_.bookId)
+      val f2 = bookOp.getBookMapFromIds(bookIds)
+      for(map<-f2) yield {
+        bookLogs.foreach(log=>log.title = map.get(log.bookId).map(_.title))
+        bookLogs
+      }
+    }
+
+
+    }
+
+    import BookLog._
+    for (ret <- ffRet.flatten) yield
+      Ok(Json.toJson(ret))
   }
 
   case class BorrowBookParam(bookId: ObjectId, userId: String)
