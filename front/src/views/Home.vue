@@ -120,7 +120,24 @@ export default Vue.extend({
       }
     },
     drawPieChart() {
-      let chartData = {
+      let series: Array<highcharts.SeriesPieOptions> = [
+        {
+          name: '書籍狀態',
+          type: 'pie',
+          data: [
+            {
+              name: '借出',
+              y: this.groupBooks.filter(book => book.lender).length,
+              selected: true,
+            },
+            {
+              name: '歸還',
+              y: this.groupBooks.filter(book => !book.lender).length,
+            },
+          ],
+        },
+      ];
+      let chartData: highcharts.Options = {
         chart: {
           plotBackgroundColor: undefined,
           plotBorderWidth: undefined,
@@ -167,24 +184,7 @@ export default Vue.extend({
             },
           },
         },
-        series: [
-          {
-            name: '書籍狀態',
-            colorByPoint: true,
-            data: [
-              {
-                name: '借出',
-                y: this.groupBooks.filter(book => book.lender).length,
-                sliced: true,
-                selected: true,
-              },
-              {
-                name: '歸還',
-                y: this.groupBooks.filter(book => !book.lender).length,
-              },
-            ],
-          },
-        ],
+        series,
       };
       highcharts.chart('bookPie', chartData);
     },
