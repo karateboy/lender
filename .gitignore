@@ -26,6 +26,5 @@ server.pid
 parsed.list
 /vuexy-starter-kit/yarn.lock
 /public/dist
-/front/*.lock
 /.bsp
 /null
